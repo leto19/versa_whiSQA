@@ -47,6 +47,13 @@ except ImportError:
     logging.info(
         "Please install visqol follow https://github.com/google/visqol and retry"
     )
+try:
+    from versa.utterance_metrics.whisqa import whisqa_metric, whisqa_model_setup
+except ImportError:
+    logging.info(
+        "Please install WhiSQA from tools/install_whisqa.sh and retry"
+    )   
+
 
 from versa.corpus_metrics.espnet_wer import espnet_levenshtein_metric, espnet_wer_setup
 from versa.corpus_metrics.fad import fad_scoring, fad_setup

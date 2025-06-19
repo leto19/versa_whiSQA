@@ -42,10 +42,14 @@ def audio_loader_setup(audio, io):
 
 
 def load_score_modules(score_config, use_gt=True, use_gt_text=False, use_gpu=False):
+   
     assert score_config, "no scoring function is provided"
     score_modules = {}
+   
     for config in score_config:
         print(config, flush=True)
+        
+    
         if config["name"] == "mcd_f0":
             if not use_gt:
                 logging.warning(
@@ -148,7 +152,20 @@ def load_score_modules(score_config, use_gt=True, use_gt_text=False, use_gpu=Fal
                 },
             }
             logging.info("Initiate pseudo MOS evaluation successfully.")
+        elif config["name"] == "whisqa":
+            
 
+            logging.info("Loading WhisQA evaluation...")
+            from versa.utterance_metrics.whisqa import whisqa_metric, whisqa_model_setup
+
+            whisqa_model = whisqa_model_setup(
+                model_type=config.get("model_type", "single"), use_gpu=use_gpu
+            )
+            score_modules["whisqa"] = {
+                "module": whisqa_metric,
+                "args": {"model": whisqa_model},
+            }
+            logging.info("Initiate WhisQA evaluation successfully.")
         elif config["name"] == "pesq":
             if not use_gt:
                 logging.warning(
@@ -162,6 +179,7 @@ def load_score_modules(score_config, use_gt=True, use_gt_text=False, use_gpu=Fal
             score_modules["pesq"] = {"module": pesq_metric}
             logging.info("Initiate pesq evaluation successfully.")
 
+        
         elif config["name"] == "stoi":
             if not use_gt:
                 logging.warning(
@@ -1057,6 +1075,12 @@ def use_score_modules(score_modules, gen_wav, gt_wav, gen_sr, text=None):
                 gen_wav,
                 gen_sr,
                 custom_prompt=score_modules[key]["prompt"],
+            )
+        elif "whisqa" in key:
+            score = score_modules[key]["module"](
+                score_modules[key]["args"]["model"],
+                gen_wav,
+                gen_sr,
             )
         else:
             raise NotImplementedError(f"Not supported {key}")

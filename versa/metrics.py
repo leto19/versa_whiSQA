@@ -110,6 +110,7 @@ NUM_METRIC = [
     "owsm_cer_equal",
     "whisper_wer",
     "whisper_wer_delete",
+    "whisqa",
     "espnet_wer_insert",
     "espnet_wer_replace",
     "espnet_wer_equal",

@@ -140,14 +140,14 @@ def main():
 
     with open(args.score_config, "r", encoding="utf-8") as f:
         score_config = yaml.full_load(f)
-
+    print("Score Config: {}".format(score_config))
     score_modules = load_score_modules(
         score_config,
         use_gt=(True if gt_files is not None else False),
         use_gt_text=(True if text_info is not None else False),
         use_gpu=args.use_gpu,
     )
-
+    print("Score Modules: {}".format(score_modules))
     if len(score_modules) > 0:
         score_info = list_scoring(
             gen_files,
